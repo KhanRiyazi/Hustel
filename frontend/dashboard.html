@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - LinkFlow Pro</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo">LF</div>
+                <div class="brand-text">
+                    <h1>LinkFlow Pro</h1>
+                    <span>AFFILIATE MANAGEMENT</span>
+                </div>
+            </div>
+
+            <div class="upgrade-card">
+                <h3>Pro Plan</h3>
+                <p>Upgrade for advanced features</p>
+                <button class="btn upgrade-btn" id="upgradeBtn">
+                    Upgrade Now
+                </button>
+            </div>
+
+            <nav class="nav">
+                <a href="#" class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-chart-line"></i>
+                    Dashboard
+                </a>
+                <a href="#" class="nav-item" data-page="links">
+                    <i class="fas fa-link"></i>
+                    My Links
+                </a>
+                <a href="#" class="nav-item" data-page="analytics">
+                    <i class="fas fa-chart-bar"></i>
+                    Analytics
+                </a>
+                <a href="#" class="nav-item" data-page="earnings">
+                    <i class="fas fa-wallet"></i>
+                    Earnings
+                </a>
+                <a href="#" class="nav-item" data-page="team">
+                    <i class="fas fa-users"></i>
+                    Team
+                </a>
+                <a href="#" class="nav-item" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </a>
+            </nav>
+
+            <div class="sidebar-stats">
+                <div class="stat-item">
+                    <span>Monthly Revenue</span>
+                    <span class="stat-value" id="monthlyRevenue">$0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Active Links</span>
+                    <span class="stat-value" id="activeLinks">0</span>
+                </div>
+                <div class="stat-item">
+                    <span>Conversion Rate</span>
+                    <span class="stat-value" id="conversionRate">0%</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Topbar -->
+            <div class="topbar">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Search links, campaigns...">
+                </div>
+
+                <div class="user-actions">
+                    <button class="notification-btn" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <button class="user-btn" id="userBtn">
+                        <i class="fas fa-user"></i>
+                    </button>
+                    <button class="btn btn-primary" id="newLinkBtn">
+                        <i class="fas fa-plus"></i> New Link
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div id="dashboard-content" class="fade-in">
+                <div class="page-header">
+                    <h1>Dashboard Overview</h1>
+                    <p>Welcome back! Here's your affiliate performance summary.</p>
+                </div>
+
+                <!-- Metrics Grid -->
+                <div class="dashboard-grid">
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <div class="metric-title">Total Clicks</div>
+                            <div class="metric-icon click-icon">
+                                <i class="fas fa-mouse-pointer"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="totalClicks">0</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i> <span class="change-text">Loading...</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <div class="metric-title">Total Revenue</div>
+                            <div class="metric-icon revenue-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="totalRevenue">$0</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i> <span class="change-text">Loading...</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <div class="metric-title">Conversion Rate</div>
+                            <div class="metric-icon conversion-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="conversionRateCard">0%</div>
+                        <div class="metric-change negative">
+                            <i class="fas fa-arrow-down"></i> <span class="change-text">Loading...</span>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <div class="metric-title">Active Campaigns</div>
+                            <div class="metric-icon campaign-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                        </div>
+                        <div class="metric-value" id="activeCampaigns">0</div>
+                        <div class="metric-change positive">
+                            <i class="fas fa-arrow-up"></i> <span class="change-text">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <h2>Quick Actions</h2>
+                    <div class="actions-grid">
+                        <div class="action-card" onclick="openCreateLinkModal()">
+                            <div class="action-icon">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <h3>Create Link</h3>
+                            <p>Create a new affiliate link</p>
+                        </div>
+
+                        <div class="action-card" onclick="viewReports()">
+                            <div class="action-icon">
+                                <i class="fas fa-chart-bar"></i>
+                            </div>
+                            <h3>View Reports</h3>
+                            <p>Detailed analytics & insights</p>
+                        </div>
+
+                        <div class="action-card" onclick="exportData()">
+                            <div class="action-icon">
+                                <i class="fas fa-download"></i>
+                            </div>
+                            <h3>Export Data</h3>
+                            <p>Export your performance data</p>
+                        </div>
+
+                        <div class="action-card" onclick="openSettings()">
+                            <div class="action-icon">
+                                <i class="fas fa-cog"></i>
+                            </div>
+                            <h3>Settings</h3>
+                            <p>Configure your account</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Links -->
+                <div class="links-container">
+                    <div class="links-header">
+                        <h2>Recent Links</h2>
+                        <button class="btn btn-primary" id="createLinkBtn">
+                            <i class="fas fa-plus"></i> Create New
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Link Details</th>
+                                    <th>Status</th>
+                                    <th>Clicks</th>
+                                    <th>Revenue</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="linksTableBody">
+                                <tr>
+                                    <td colspan="5" class="loading-state">
+                                        <div class="loading"></div>
+                                        <p>Loading your links...</p>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Performance Chart -->
+                <div class="chart-container">
+                    <div class="links-header">
+                        <h2>Performance Overview</h2>
+                        <div class="chart-actions">
+                            <button class="btn btn-secondary chart-period active" data-period="7d">7D</button>
+                            <button class="btn btn-secondary chart-period" data-period="1m">1M</button>
+                            <button class="btn btn-secondary chart-period" data-period="3m">3M</button>
+                            <button class="btn btn-secondary chart-period" data-period="1y">1Y</button>
+                        </div>
+                    </div>
+                    <div class="chart-placeholder">
+                        <div class="chart-message">
+                            <i class="fas fa-chart-line"></i>
+                            <p>Performance charts will be displayed here</p>
+                            <small>Real-time analytics coming soon</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Link Modal -->
+    <div class="modal" id="createLinkModal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Link</h3>
+                <button class="modal-close" onclick="closeCreateLinkModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="createLinkForm">
+                <div class="form-group">
+                    <label for="linkTitle">Link Title</label>
+                    <input type="text" id="linkTitle" class="form-control" placeholder="e.g. Amazon Summer Sale"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="destinationUrl">Destination URL</label>
+                    <input type="url" id="destinationUrl" class="form-control" placeholder="https://example.com"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="linkCategory">Category</label>
+                    <select id="linkCategory" class="form-control">
+                        <option value="affiliate">Affiliate</option>
+                        <option value="content">Content</option>
+                        <option value="social">Social Media</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeCreateLinkModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Create Link
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notificationPanel">
+        <div class="notification-header">
+            <h3>Notifications</h3>
+            <button class="notification-close" onclick="closeNotifications()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="notification-list">
+            <div class="notification-item">
+                <div class="notification-icon success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="notification-content">
+                    <p>New link created successfully</p>
+                    <small>2 minutes ago</small>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="notification-content">
+                    <p>Campaign performance dropping</p>
+                    <small>1 hour ago</small>
+                </div>
+            </div>
+            <div class="notification-item">
+                <div class="notification-icon info">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="notification-content">
+                    <p>New feature available: Bulk imports</p>
+                    <small>2 hours ago</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+    <script>
+        // Dashboard-specific JavaScript
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('📊 Dashboard initialized');
+
+            // Initialize dashboard-specific features
+            initDashboard();
+        });
+
+        function initDashboard() {
+            // Setup dashboard event listeners
+            setupDashboardEvents();
+
+            // Load initial data
+            loadDashboardData();
+
+            // Initialize charts
+            initCharts();
+        }
+
+        function setupDashboardEvents() {
+            // Chart period buttons
+            document.querySelectorAll('.chart-period').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const period = this.getAttribute('data-period');
+                    switchChartPeriod(period);
+                });
+            });
+
+            // Upgrade button
+            const upgradeBtn = document.getElementById('upgradeBtn');
+            if (upgradeBtn) {
+                upgradeBtn.addEventListener('click', function () {
+                    showNotification('Upgrade functionality coming soon!', 'info');
+                });
+            }
+
+            // Notification button
+            const notificationBtn = document.getElementById('notificationBtn');
+            if (notificationBtn) {
+                notificationBtn.addEventListener('click', function () {
+                    toggleNotifications();
+                });
+            }
+
+            // User button
+            const userBtn = document.getElementById('userBtn');
+            if (userBtn) {
+                userBtn.addEventListener('click', function () {
+                    showNotification('User profile coming soon!', 'info');
+                });
+            }
+
+            // Mobile menu
+            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function () {
+                    toggleMobileMenu();
+                });
+            }
+        }
+
+        function switchChartPeriod(period) {
+            // Update active button
+            document.querySelectorAll('.chart-period').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-period="${period}"]`).classList.add('active');
+
+            // Show loading state
+            const chartMessage = document.querySelector('.chart-message');
+            if (chartMessage) {
+                chartMessage.innerHTML = `
+                    <div class="loading"></div>
+                    <p>Loading ${period} data...</p>
+                `;
+            }
+
+            // Simulate chart loading
+            setTimeout(() => {
+                if (chartMessage) {
+                    chartMessage.innerHTML = `
+                        <i class="fas fa-chart-line"></i>
+                        <p>${period.toUpperCase()} Performance Data</p>
+                        <small>Real-time analytics coming soon</small>
+                    `;
+                }
+                showNotification(`Chart period switched to ${period.toUpperCase()}`, 'success');
+            }, 1000);
+        }
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationPanel');
+            panel.classList.toggle('active');
+        }
+
+        function closeNotifications() {
+            const panel = document.getElementById('notificationPanel');
+            panel.classList.remove('active');
+        }
+
+        function toggleMobileMenu() {
+            const sidebar = document.querySelector('.sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        function initCharts() {
+            // Initialize any charts here
+            console.log('📈 Charts initialized');
+        }
+
+        // Add dashboard-specific styles
+        const dashboardStyles = document.createElement('style');
+        dashboardStyles.textContent = `
+            .upgrade-card {
+                background: linear-gradient(135deg, var(--primary), var(--primary-light));
+                padding: 1.5rem;
+                border-radius: var(--radius);
+                margin-bottom: 2rem;
+                text-align: center;
+                color: white;
+            }
+            
+            .upgrade-card h3 {
+                margin-bottom: 0.5rem;
+                font-size: 1rem;
+            }
+            
+            .upgrade-card p {
+                color: rgba(255,255,255,0.8);
+                font-size: 0.85rem;
+                margin-bottom: 1rem;
+            }
+            
+            .upgrade-btn {
+                background: rgba(255,255,255,0.2);
+                color: white;
+                border: none;
+                width: 100%;
+                font-size: 0.85rem;
+                padding: 0.5rem 1rem;
+            }
+            
+            .sidebar-stats {
+                background: var(--bg);
+                padding: 1.5rem;
+                border-radius: var(--radius);
+                margin-top: auto;
+            }
+            
+            .stat-item {
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 0.75rem;
+            }
+            
+            .stat-item:last-child {
+                margin-bottom: 0;
+            }
+            
+            .page-header {
+                margin-bottom: 2rem;
+            }
+            
+            .page-header h1 {
+                color: var(--text);
+                margin-bottom: 0.5rem;
+                font-size: 2rem;
+            }
+            
+            .page-header p {
+                color: var(--text-muted);
+            }
+            
+            .click-icon { background: linear-gradient(135deg, var(--secondary), #22d3ee); }
+            .revenue-icon { background: linear-gradient(135deg, var(--success), #34d399); }
+            .conversion-icon { background: linear-gradient(135deg, var(--accent), #fbbf24); }
+            .campaign-icon { background: linear-gradient(135deg, var(--primary), var(--primary-light)); }
+            
+            .change-text {
+                font-size: 0.85rem;
+            }
+            
+            .quick-actions {
+                margin: 2rem 0;
+            }
+            
+            .quick-actions h2 {
+                color: var(--text);
+                margin-bottom: 1.5rem;
+                font-size: 1.5rem;
+            }
+            
+            .actions-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+            }
+            
+            .action-card {
+                background: var(--card);
+                padding: 1.5rem;
+                border-radius: var(--radius);
+                text-align: center;
+                cursor: pointer;
+                transition: var(--transition);
+                border: 1px solid var(--border);
+            }
+            
+            .action-card:hover {
+                transform: translateY(-3px);
+                border-color: var(--primary);
+            }
+            
+            .action-icon {
+                width: 50px;
+                height: 50px;
+                background: var(--primary);
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 1rem;
+                color: white;
+                font-size: 1.2rem;
+            }
+            
+            .action-card h3 {
+                color: var(--text);
+                margin-bottom: 0.5rem;
+                font-size: 1.1rem;
+            }
+            
+            .action-card p {
+                color: var(--text-muted);
+                font-size: 0.9rem;
+            }
+            
+            .chart-container {
+                background: var(--card);
+                padding: 2rem;
+                border-radius: var(--radius-lg);
+                margin-top: 2rem;
+                border: 1px solid var(--border);
+            }
+            
+            .chart-placeholder {
+                height: 300px;
+                background: var(--bg-light);
+                border-radius: var(--radius);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .chart-message {
+                text-align: center;
+                color: var(--text-muted);
+            }
+            
+            .chart-message i {
+                font-size: 3rem;
+                margin-bottom: 1rem;
+                opacity: 0.5;
+            }
+            
+            .notification-badge {
+                position: absolute;
+                top: -5px;
+                right: -5px;
+                background: var(--error);
+                color: white;
+                border-radius: 50%;
+                width: 18px;
+                height: 18px;
+                font-size: 0.7rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .notification-panel {
+                position: fixed;
+                top: 0;
+                right: -400px;
+                width: 380px;
+                height: 100vh;
+                background: var(--card);
+                border-left: 1px solid var(--border);
+                z-index: 1000;
+                transition: var(--transition);
+                box-shadow: var(--shadow-xl);
+            }
+            
+            .notification-panel.active {
+                right: 0;
+            }
+            
+            .notification-header {
+                padding: 1.5rem;
+                border-bottom: 1px solid var(--border);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .notification-header h3 {
+                color: var(--text);
+            }
+            
+            .notification-close {
+                background: none;
+                border: none;
+                color: var(--text-muted);
+                cursor: pointer;
+                padding: 0.5rem;
+            }
+            
+            .notification-list {
+                padding: 1rem;
+            }
+            
+            .notification-item {
+                display: flex;
+                gap: 1rem;
+                padding: 1rem;
+                border-radius: var(--radius);
+                margin-bottom: 0.5rem;
+                background: var(--bg-light);
+            }
+            
+            .notification-icon {
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+            
+            .notification-icon.success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+            .notification-icon.warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+            .notification-icon.info { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
+            
+            .notification-content p {
+                color: var(--text);
+                margin-bottom: 0.25rem;
+            }
+            
+            .notification-content small {
+                color: var(--text-muted);
+                font-size: 0.8rem;
+            }
+            
+            .loading-state {
+                text-align: center;
+                padding: 3rem !important;
+            }
+            
+            @media (max-width: 768px) {
+                .sidebar {
+                    transform: translateX(-100%);
+                }
+                
+                .sidebar.active {
+                    transform: translateX(0);
+                }
+                
+                .main {
+                    margin-left: 0;
+                }
+                
+                .mobile-menu-btn {
+                    display: block !important;
+                }
+                
+                .notification-panel {
+                    width: 100%;
+                    right: -100%;
+                }
+            }
+        `;
+        document.head.appendChild(dashboardStyles);
+    </script>
+</body>
+
+</html>
