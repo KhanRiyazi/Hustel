@@ -9,10 +9,10 @@ def main():
     print("🖥️  Frontend: http://localhost:8000")
     print("⏹️  Press Ctrl+C to stop the server")
     print("-" * 50)
-    
+
     try:
         uvicorn.run(
-            "app.main:app",
+            "backend.app.main:app",  # CHANGED THIS LINE
             host="0.0.0.0",
             port=8000,
             reload=True,
