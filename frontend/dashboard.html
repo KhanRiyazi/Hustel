@@ -5,722 +5,1526 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - LinkFlow Pro</title>
-    <link rel="stylesheet" href="/static/css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #6366f1;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --text: #1f2937;
+            --text-muted: #6b7280;
+            --bg: #f9fafb;
+            --bg-light: #f3f4f6;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --radius: 8px;
+            --radius-lg: 12px;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s ease;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 1.5rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .sidebar-nav {
+            padding: 0 1rem;
+        }
+
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-section-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            padding: 0 1rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius);
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            margin-bottom: 0.25rem;
+            cursor: pointer;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            padding: 1.5rem;
+            transition: var(--transition);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-title h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .header-title p {
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--bg-light);
+            color: var(--text);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .user-menu:hover {
+            background: var(--bg-light);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--border);
+            width: 200px;
+            padding: 0.5rem 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .user-menu.active .user-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .user-dropdown a {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: var(--text);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .user-dropdown a:hover {
+            background: var(--bg-light);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .stat-icon.primary {
+            background: rgba(79, 70, 229, 0.1);
+            color: var(--primary);
+        }
+
+        .stat-icon.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .stat-icon.warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .stat-icon.secondary {
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--secondary);
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            color: var(--error);
+        }
+
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        /* Links Table */
+        .links-section {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .link-cell {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .link-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius);
+            background: var(--bg-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        .link-info h4 {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .link-info p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .status-badge.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .status-badge.paused {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .actions-cell {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-light);
+            color: var(--text);
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--card);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
+            width: 90%;
+            max-width: 500px;
+            transform: translateY(20px);
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--text);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--bg);
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        /* Page Content */
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius);
+            background: var(--card);
+            box-shadow: var(--shadow-xl);
+            border-left: 4px solid var(--success);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 1001;
+            transform: translateX(120%);
+            transition: var(--transition);
+        }
+
+        .notification.active {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left-color: var(--success);
+        }
+
+        .notification.error {
+            border-left-color: var(--error);
+        }
+
+        .notification.warning {
+            border-left-color: var(--warning);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.25rem;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        .api-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: white;
+        }
+
+        .api-status.connected {
+            background: var(--success);
+        }
+
+        .api-status.disconnected {
+            background: var(--error);
+        }
+
+        .api-status.connecting {
+            background: var(--warning);
+        }
+
+        .loading {
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
 
 <body>
-    <div class="app">
+    <!-- API Status Indicator -->
+    <div class="api-status connecting" id="apiStatus">
+        <div class="loading"></div>
+        <span>Connecting to API...</span>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Action completed successfully!</span>
+    </div>
+
+    <!-- Dashboard Container -->
+    <div class="dashboard-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="brand">
-                <div class="logo">LF</div>
-                <div class="brand-text">
-                    <h1>LinkFlow Pro</h1>
-                    <span>AFFILIATE MANAGEMENT</span>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <div class="logo-icon">LF</div>
+                    LinkFlow Pro
+                </a>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="#" class="nav-link active" data-page="dashboard">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                    <a href="#" class="nav-link" data-page="links">
+                        <i class="fas fa-link"></i>
+                        My Links
+                    </a>
+                    <a href="#" class="nav-link" data-page="analytics">
+                        <i class="fas fa-chart-bar"></i>
+                        Analytics
+                    </a>
+                    <a href="#" class="nav-link" data-page="earnings">
+                        <i class="fas fa-wallet"></i>
+                        Earnings
+                    </a>
                 </div>
-            </div>
-
-            <div class="upgrade-card">
-                <h3>Pro Plan</h3>
-                <p>Upgrade for advanced features</p>
-                <button class="btn upgrade-btn" id="upgradeBtn">
-                    Upgrade Now
-                </button>
-            </div>
-
-            <nav class="nav">
-                <a href="#" class="nav-item active" data-page="dashboard">
-                    <i class="fas fa-chart-line"></i>
-                    Dashboard
-                </a>
-                <a href="#" class="nav-item" data-page="links">
-                    <i class="fas fa-link"></i>
-                    My Links
-                </a>
-                <a href="#" class="nav-item" data-page="analytics">
-                    <i class="fas fa-chart-bar"></i>
-                    Analytics
-                </a>
-                <a href="#" class="nav-item" data-page="earnings">
-                    <i class="fas fa-wallet"></i>
-                    Earnings
-                </a>
-                <a href="#" class="nav-item" data-page="team">
-                    <i class="fas fa-users"></i>
-                    Team
-                </a>
-                <a href="#" class="nav-item" data-page="settings">
-                    <i class="fas fa-cog"></i>
-                    Settings
-                </a>
+                <div class="nav-section">
+                    <div class="nav-section-title">Tools</div>
+                    <a href="#" class="nav-link" id="createLinkSidebar">
+                        <i class="fas fa-plus-circle"></i>
+                        Create Link
+                    </a>
+                    <a href="#" class="nav-link" data-page="groups">
+                        <i class="fas fa-object-group"></i>
+                        Link Groups
+                    </a>
+                    <a href="#" class="nav-link" data-page="qrcodes">
+                        <i class="fas fa-qrcode"></i>
+                        QR Codes
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title">Account</div>
+                    <a href="#" class="nav-link" data-page="settings">
+                        <i class="fas fa-cog"></i>
+                        Settings
+                    </a>
+                    <a href="#" class="nav-link" data-page="team">
+                        <i class="fas fa-user-friends"></i>
+                        Team
+                    </a>
+                    <a href="#" class="nav-link" data-page="support">
+                        <i class="fas fa-question-circle"></i>
+                        Support
+                    </a>
+                </div>
             </nav>
-
-            <div class="sidebar-stats">
-                <div class="stat-item">
-                    <span>Monthly Revenue</span>
-                    <span class="stat-value" id="monthlyRevenue">$0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Active Links</span>
-                    <span class="stat-value" id="activeLinks">0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Conversion Rate</span>
-                    <span class="stat-value" id="conversionRate">0%</span>
-                </div>
-            </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="main">
-            <!-- Topbar -->
-            <div class="topbar">
-                <button class="mobile-menu-btn" id="mobileMenuBtn">
-                    <i class="fas fa-bars"></i>
-                </button>
-
-                <div class="search-bar">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="searchInput" placeholder="Search links, campaigns...">
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-title">
+                    <h1 id="pageTitle">Dashboard</h1>
+                    <p id="pageDescription">Welcome back, Sarah! Here's your affiliate performance overview.</p>
                 </div>
-
-                <div class="user-actions">
-                    <button class="notification-btn" id="notificationBtn">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
+                <div class="header-actions">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
                     </button>
-                    <button class="user-btn" id="userBtn">
-                        <i class="fas fa-user"></i>
+                    <button class="btn btn-primary" id="createLinkBtn">
+                        <i class="fas fa-plus"></i>
+                        Create New Link
                     </button>
-                    <button class="btn btn-primary" id="newLinkBtn">
-                        <i class="fas fa-plus"></i> New Link
-                    </button>
+                    <div class="user-menu" id="userMenu">
+                        <div class="user-avatar">SA</div>
+                        <div>
+                            <div style="font-weight: 500;">Sarah Anderson</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">Pro Plan</div>
+                        </div>
+                        <i class="fas fa-chevron-down"></i>
+                        <div class="user-dropdown">
+                            <a href="#" data-page="profile"><i class="fas fa-user"></i> My Profile</a>
+                            <a href="#" data-page="settings"><i class="fas fa-cog"></i> Settings</a>
+                            <a href="#" data-page="billing"><i class="fas fa-credit-card"></i> Billing</a>
+                            <a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </header>
 
-            <!-- Dashboard Content -->
-            <div id="dashboard-content" class="fade-in">
-                <div class="page-header">
-                    <h1>Dashboard Overview</h1>
-                    <p>Welcome back! Here's your affiliate performance summary.</p>
-                </div>
-
-                <!-- Metrics Grid -->
-                <div class="dashboard-grid">
-                    <div class="metric-card">
-                        <div class="metric-header">
-                            <div class="metric-title">Total Clicks</div>
-                            <div class="metric-icon click-icon">
+            <!-- Dashboard Page -->
+            <div class="page-content active" id="dashboard-page">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value">1,247</div>
+                                <div class="stat-label">Total Clicks</div>
+                            </div>
+                            <div class="stat-icon primary">
                                 <i class="fas fa-mouse-pointer"></i>
                             </div>
                         </div>
-                        <div class="metric-value" id="totalClicks">0</div>
-                        <div class="metric-change positive">
-                            <i class="fas fa-arrow-up"></i> <span class="change-text">Loading...</span>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>12.5% from last week</span>
                         </div>
                     </div>
-
-                    <div class="metric-card">
-                        <div class="metric-header">
-                            <div class="metric-title">Total Revenue</div>
-                            <div class="metric-icon revenue-icon">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value">84</div>
+                                <div class="stat-label">Conversions</div>
+                            </div>
+                            <div class="stat-icon success">
+                                <i class="fas fa-shopping-cart"></i>
+                            </div>
+                        </div>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>8.2% from last week</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value">$1,284.50</div>
+                                <div class="stat-label">Revenue</div>
+                            </div>
+                            <div class="stat-icon warning">
                                 <i class="fas fa-dollar-sign"></i>
                             </div>
                         </div>
-                        <div class="metric-value" id="totalRevenue">$0</div>
-                        <div class="metric-change positive">
-                            <i class="fas fa-arrow-up"></i> <span class="change-text">Loading...</span>
+                        <div class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>15.3% from last week</span>
                         </div>
                     </div>
-
-                    <div class="metric-card">
-                        <div class="metric-header">
-                            <div class="metric-title">Conversion Rate</div>
-                            <div class="metric-icon conversion-icon">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div>
+                                <div class="stat-value">6.73%</div>
+                                <div class="stat-label">Conversion Rate</div>
+                            </div>
+                            <div class="stat-icon secondary">
                                 <i class="fas fa-percentage"></i>
                             </div>
                         </div>
-                        <div class="metric-value" id="conversionRateCard">0%</div>
-                        <div class="metric-change negative">
-                            <i class="fas fa-arrow-down"></i> <span class="change-text">Loading...</span>
-                        </div>
-                    </div>
-
-                    <div class="metric-card">
-                        <div class="metric-header">
-                            <div class="metric-title">Active Campaigns</div>
-                            <div class="metric-icon campaign-icon">
-                                <i class="fas fa-rocket"></i>
-                            </div>
-                        </div>
-                        <div class="metric-value" id="activeCampaigns">0</div>
-                        <div class="metric-change positive">
-                            <i class="fas fa-arrow-up"></i> <span class="change-text">Loading...</span>
+                        <div class="stat-change negative">
+                            <i class="fas fa-arrow-down"></i>
+                            <span>1.2% from last week</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
-                <div class="quick-actions">
-                    <h2>Quick Actions</h2>
-                    <div class="actions-grid">
-                        <div class="action-card" onclick="openCreateLinkModal()">
-                            <div class="action-icon">
-                                <i class="fas fa-plus"></i>
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Clicks & Conversions Overview</div>
+                            <div class="chart-actions">
+                                <select class="form-control" id="timeRange" style="width: auto;">
+                                    <option>Last 7 days</option>
+                                    <option>Last 30 days</option>
+                                    <option>Last 90 days</option>
+                                </select>
                             </div>
-                            <h3>Create Link</h3>
-                            <p>Create a new affiliate link</p>
                         </div>
-
-                        <div class="action-card" onclick="viewReports()">
-                            <div class="action-icon">
-                                <i class="fas fa-chart-bar"></i>
-                            </div>
-                            <h3>View Reports</h3>
-                            <p>Detailed analytics & insights</p>
+                        <div class="chart-container">
+                            <canvas id="clicksChart"></canvas>
                         </div>
-
-                        <div class="action-card" onclick="exportData()">
-                            <div class="action-icon">
-                                <i class="fas fa-download"></i>
-                            </div>
-                            <h3>Export Data</h3>
-                            <p>Export your performance data</p>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <div class="chart-title">Revenue Sources</div>
                         </div>
-
-                        <div class="action-card" onclick="openSettings()">
-                            <div class="action-icon">
-                                <i class="fas fa-cog"></i>
-                            </div>
-                            <h3>Settings</h3>
-                            <p>Configure your account</p>
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
                         </div>
                     </div>
                 </div>
 
-                <!-- Recent Links -->
-                <div class="links-container">
-                    <div class="links-header">
-                        <h2>Recent Links</h2>
-                        <button class="btn btn-primary" id="createLinkBtn">
-                            <i class="fas fa-plus"></i> Create New
+                <!-- Links Table -->
+                <section class="links-section">
+                    <div class="section-header">
+                        <div class="section-title">Recent Links</div>
+                        <button class="btn btn-secondary" id="refreshLinks">
+                            <i class="fas fa-sync-alt"></i>
+                            Refresh
                         </button>
                     </div>
-
                     <div class="table-container">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>Link Details</th>
-                                    <th>Status</th>
+                                    <th>Link</th>
                                     <th>Clicks</th>
+                                    <th>Conversions</th>
                                     <th>Revenue</th>
+                                    <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
                             <tbody id="linksTableBody">
-                                <tr>
-                                    <td colspan="5" class="loading-state">
-                                        <div class="loading"></div>
-                                        <p>Loading your links...</p>
-                                    </td>
-                                </tr>
+                                <!-- Links will be populated by JavaScript -->
                             </tbody>
                         </table>
                     </div>
-                </div>
-
-                <!-- Performance Chart -->
-                <div class="chart-container">
-                    <div class="links-header">
-                        <h2>Performance Overview</h2>
-                        <div class="chart-actions">
-                            <button class="btn btn-secondary chart-period active" data-period="7d">7D</button>
-                            <button class="btn btn-secondary chart-period" data-period="1m">1M</button>
-                            <button class="btn btn-secondary chart-period" data-period="3m">3M</button>
-                            <button class="btn btn-secondary chart-period" data-period="1y">1Y</button>
-                        </div>
-                    </div>
-                    <div class="chart-placeholder">
-                        <div class="chart-message">
-                            <i class="fas fa-chart-line"></i>
-                            <p>Performance charts will be displayed here</p>
-                            <small>Real-time analytics coming soon</small>
-                        </div>
-                    </div>
-                </div>
+                </section>
             </div>
+
+            <!-- Other Pages -->
+            <div class="page-content" id="links-page">
+                <div class="section-header">
+                    <div class="section-title">My Links</div>
+                    <button class="btn btn-primary" id="createLinkPageBtn">
+                        <i class="fas fa-plus"></i>
+                        Create New Link
+                    </button>
+                </div>
+                <p>This is the My Links page. All your affiliate links will be displayed here.</p>
+            </div>
+
+            <div class="page-content" id="analytics-page">
+                <div class="section-header">
+                    <div class="section-title">Analytics</div>
+                </div>
+                <p>This is the Analytics page. Detailed performance metrics and insights will be displayed here.</p>
+            </div>
+
+            <div class="page-content" id="earnings-page">
+                <div class="section-header">
+                    <div class="section-title">Earnings</div>
+                </div>
+                <p>This is the Earnings page. Your revenue and payout information will be displayed here.</p>
+            </div>
+
+            <!-- Add more page content divs for other pages as needed -->
         </main>
     </div>
 
     <!-- Create Link Modal -->
-    <div class="modal" id="createLinkModal">
-        <div class="modal-backdrop"></div>
-        <div class="modal-content">
+    <div class="modal-overlay" id="createLinkModal">
+        <div class="modal">
             <div class="modal-header">
-                <h3>Create New Link</h3>
-                <button class="modal-close" onclick="closeCreateLinkModal()">
+                <div class="modal-title">Create New Link</div>
+                <button class="modal-close" id="closeModal">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <form id="createLinkForm">
-                <div class="form-group">
-                    <label for="linkTitle">Link Title</label>
-                    <input type="text" id="linkTitle" class="form-control" placeholder="e.g. Amazon Summer Sale"
-                        required>
-                </div>
-                <div class="form-group">
-                    <label for="destinationUrl">Destination URL</label>
-                    <input type="url" id="destinationUrl" class="form-control" placeholder="https://example.com"
-                        required>
-                </div>
-                <div class="form-group">
-                    <label for="linkCategory">Category</label>
-                    <select id="linkCategory" class="form-control">
-                        <option value="affiliate">Affiliate</option>
-                        <option value="content">Content</option>
-                        <option value="social">Social Media</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeCreateLinkModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Create Link
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Notification Panel -->
-    <div class="notification-panel" id="notificationPanel">
-        <div class="notification-header">
-            <h3>Notifications</h3>
-            <button class="notification-close" onclick="closeNotifications()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="notification-list">
-            <div class="notification-item">
-                <div class="notification-icon success">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="notification-content">
-                    <p>New link created successfully</p>
-                    <small>2 minutes ago</small>
-                </div>
-            </div>
-            <div class="notification-item">
-                <div class="notification-icon warning">
-                    <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <div class="notification-content">
-                    <p>Campaign performance dropping</p>
-                    <small>1 hour ago</small>
-                </div>
-            </div>
-            <div class="notification-item">
-                <div class="notification-icon info">
-                    <i class="fas fa-info-circle"></i>
-                </div>
-                <div class="notification-content">
-                    <p>New feature available: Bulk imports</p>
-                    <small>2 hours ago</small>
-                </div>
+            <div class="modal-body">
+                <form id="createLinkForm">
+                    <div class="form-group">
+                        <label class="form-label" for="linkTitle">Link Title</label>
+                        <input type="text" class="form-control" id="linkTitle" placeholder="e.g. Summer Sale Promotion">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="destinationUrl">Destination URL</label>
+                        <input type="url" class="form-control" id="destinationUrl"
+                            placeholder="https://example.com/promo">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="campaign">Campaign (Optional)</label>
+                        <input type="text" class="form-control" id="campaign" placeholder="e.g. Summer2023">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="cancelCreate">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Create Link</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
 
-    <script src="/static/js/app.js"></script>
     <script>
-        // Dashboard-specific JavaScript
+        // Sample data for the dashboard
+        const sampleLinks = [
+            {
+                id: 1,
+                title: "Summer Sale Promotion",
+                url: "linkflow.pro/s/summer-sale",
+                clicks: 342,
+                conversions: 24,
+                revenue: 384.50,
+                status: "active"
+            },
+            {
+                id: 2,
+                title: "New Product Launch",
+                url: "linkflow.pro/s/new-product",
+                clicks: 218,
+                conversions: 18,
+                revenue: 295.00,
+                status: "active"
+            },
+            {
+                id: 3,
+                title: "Black Friday Deal",
+                url: "linkflow.pro/s/black-friday",
+                clicks: 156,
+                conversions: 12,
+                revenue: 210.75,
+                status: "paused"
+            },
+            {
+                id: 4,
+                title: "Weekly Newsletter",
+                url: "linkflow.pro/s/newsletter",
+                clicks: 89,
+                conversions: 7,
+                revenue: 105.25,
+                status: "active"
+            },
+            {
+                id: 5,
+                title: "Limited Time Offer",
+                url: "linkflow.pro/s/limited-offer",
+                clicks: 442,
+                conversions: 23,
+                revenue: 289.00,
+                status: "active"
+            }
+        ];
+
+        // Page titles and descriptions
+        const pageInfo = {
+            dashboard: {
+                title: "Dashboard",
+                description: "Welcome back, Sarah! Here's your affiliate performance overview."
+            },
+            links: {
+                title: "My Links",
+                description: "Manage all your affiliate links in one place."
+            },
+            analytics: {
+                title: "Analytics",
+                description: "Detailed performance metrics and insights for your links."
+            },
+            earnings: {
+                title: "Earnings",
+                description: "Track your revenue and payout information."
+            },
+            groups: {
+                title: "Link Groups",
+                description: "Organize your links into groups for better management."
+            },
+            qrcodes: {
+                title: "QR Codes",
+                description: "Generate and manage QR codes for your links."
+            },
+            settings: {
+                title: "Settings",
+                description: "Configure your account and preferences."
+            },
+            team: {
+                title: "Team",
+                description: "Manage team members and their permissions."
+            },
+            support: {
+                title: "Support",
+                description: "Get help and contact our support team."
+            },
+            profile: {
+                title: "My Profile",
+                description: "Update your personal information and preferences."
+            },
+            billing: {
+                title: "Billing",
+                description: "Manage your subscription and payment methods."
+            }
+        };
+
+        // DOM Elements
+        const apiStatus = document.getElementById('apiStatus');
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menuToggle');
+        const createLinkBtn = document.getElementById('createLinkBtn');
+        const createLinkSidebar = document.getElementById('createLinkSidebar');
+        const createLinkPageBtn = document.getElementById('createLinkPageBtn');
+        const createLinkModal = document.getElementById('createLinkModal');
+        const closeModal = document.getElementById('closeModal');
+        const cancelCreate = document.getElementById('cancelCreate');
+        const createLinkForm = document.getElementById('createLinkForm');
+        const linksTableBody = document.getElementById('linksTableBody');
+        const refreshLinks = document.getElementById('refreshLinks');
+        const userMenu = document.getElementById('userMenu');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const notification = document.getElementById('notification');
+        const notificationText = document.getElementById('notificationText');
+        const pageTitle = document.getElementById('pageTitle');
+        const pageDescription = document.getElementById('pageDescription');
+        const timeRange = document.getElementById('timeRange');
+
+        // Initialize the dashboard
         document.addEventListener('DOMContentLoaded', function () {
-            console.log('📊 Dashboard initialized');
-
-            // Initialize dashboard-specific features
-            initDashboard();
-        });
-
-        function initDashboard() {
-            // Setup dashboard event listeners
-            setupDashboardEvents();
-
-            // Load initial data
-            loadDashboardData();
+            // Test API connection
+            testAPIConnection();
 
             // Initialize charts
             initCharts();
-        }
 
-        function setupDashboardEvents() {
-            // Chart period buttons
-            document.querySelectorAll('.chart-period').forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const period = this.getAttribute('data-period');
-                    switchChartPeriod(period);
-                });
-            });
+            // Populate links table
+            populateLinksTable();
 
-            // Upgrade button
-            const upgradeBtn = document.getElementById('upgradeBtn');
-            if (upgradeBtn) {
-                upgradeBtn.addEventListener('click', function () {
-                    showNotification('Upgrade functionality coming soon!', 'info');
-                });
-            }
+            // Setup event listeners
+            setupEventListeners();
+        });
 
-            // Notification button
-            const notificationBtn = document.getElementById('notificationBtn');
-            if (notificationBtn) {
-                notificationBtn.addEventListener('click', function () {
-                    toggleNotifications();
-                });
-            }
-
-            // User button
-            const userBtn = document.getElementById('userBtn');
-            if (userBtn) {
-                userBtn.addEventListener('click', function () {
-                    showNotification('User profile coming soon!', 'info');
-                });
-            }
-
-            // Mobile menu
-            const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-            if (mobileMenuBtn) {
-                mobileMenuBtn.addEventListener('click', function () {
-                    toggleMobileMenu();
-                });
+        // Test API connection
+        async function testAPIConnection() {
+            try {
+                // In a real app, this would be your actual API endpoint
+                // For demo purposes, we'll simulate an API call
+                setTimeout(() => {
+                    apiStatus.className = 'api-status connected';
+                    apiStatus.innerHTML = '<i class="fas fa-check"></i><span>API Connected</span>';
+                }, 1500);
+            } catch (error) {
+                apiStatus.className = 'api-status disconnected';
+                apiStatus.innerHTML = '<i class="fas fa-times"></i><span>API Connection Failed</span>';
             }
         }
 
-        function switchChartPeriod(period) {
-            // Update active button
-            document.querySelectorAll('.chart-period').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`[data-period="${period}"]`).classList.add('active');
-
-            // Show loading state
-            const chartMessage = document.querySelector('.chart-message');
-            if (chartMessage) {
-                chartMessage.innerHTML = `
-                    <div class="loading"></div>
-                    <p>Loading ${period} data...</p>
-                `;
-            }
-
-            // Simulate chart loading
-            setTimeout(() => {
-                if (chartMessage) {
-                    chartMessage.innerHTML = `
-                        <i class="fas fa-chart-line"></i>
-                        <p>${period.toUpperCase()} Performance Data</p>
-                        <small>Real-time analytics coming soon</small>
-                    `;
-                }
-                showNotification(`Chart period switched to ${period.toUpperCase()}`, 'success');
-            }, 1000);
-        }
-
-        function toggleNotifications() {
-            const panel = document.getElementById('notificationPanel');
-            panel.classList.toggle('active');
-        }
-
-        function closeNotifications() {
-            const panel = document.getElementById('notificationPanel');
-            panel.classList.remove('active');
-        }
-
-        function toggleMobileMenu() {
-            const sidebar = document.querySelector('.sidebar');
-            sidebar.classList.toggle('active');
-        }
-
+        // Initialize charts
         function initCharts() {
-            // Initialize any charts here
-            console.log('📈 Charts initialized');
+            // Clicks & Conversions Chart
+            const clicksCtx = document.getElementById('clicksChart').getContext('2d');
+            new Chart(clicksCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [
+                        {
+                            label: 'Clicks',
+                            data: [120, 190, 170, 220, 180, 150, 210],
+                            borderColor: '#4f46e5',
+                            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Conversions',
+                            data: [8, 12, 10, 15, 11, 9, 14],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Revenue Sources Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(revenueCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Amazon', 'eBay', 'Shopify', 'Other'],
+                    datasets: [{
+                        data: [45, 25, 20, 10],
+                        backgroundColor: [
+                            '#4f46e5',
+                            '#10b981',
+                            '#f59e0b',
+                            '#06b6d4'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
         }
 
-        // Add dashboard-specific styles
-        const dashboardStyles = document.createElement('style');
-        dashboardStyles.textContent = `
-            .upgrade-card {
-                background: linear-gradient(135deg, var(--primary), var(--primary-light));
-                padding: 1.5rem;
-                border-radius: var(--radius);
-                margin-bottom: 2rem;
-                text-align: center;
-                color: white;
+        // Populate links table with data
+        function populateLinksTable() {
+            linksTableBody.innerHTML = '';
+
+            sampleLinks.forEach(link => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div class="link-cell">
+                            <div class="link-icon">
+                                <i class="fas fa-link"></i>
+                            </div>
+                            <div class="link-info">
+                                <h4>${link.title}</h4>
+                                <p>${link.url}</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${link.clicks}</td>
+                    <td>${link.conversions}</td>
+                    <td>$${link.revenue.toFixed(2)}</td>
+                    <td>
+                        <span class="status-badge ${link.status}" data-link-id="${link.id}">${link.status}</span>
+                    </td>
+                    <td>
+                        <div class="actions-cell">
+                            <button class="action-btn edit-link" title="Edit" data-link-id="${link.id}">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="action-btn copy-link" title="Copy" data-link-url="${link.url}">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="action-btn view-stats" title="Stats" data-link-id="${link.id}">
+                                <i class="fas fa-chart-bar"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                linksTableBody.appendChild(row);
+            });
+        }
+
+        // Show notification
+        function showNotification(message, type = 'success') {
+            notificationText.textContent = message;
+            notification.className = `notification ${type} active`;
+
+            setTimeout(() => {
+                notification.classList.remove('active');
+            }, 3000);
+        }
+
+        // Navigate to page
+        function navigateToPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(page => {
+                page.classList.remove('active');
+            });
+
+            // Show the selected page
+            const targetPage = document.getElementById(`${pageId}-page`);
+            if (targetPage) {
+                targetPage.classList.add('active');
             }
-            
-            .upgrade-card h3 {
-                margin-bottom: 0.5rem;
-                font-size: 1rem;
+
+            // Update page title and description
+            if (pageInfo[pageId]) {
+                pageTitle.textContent = pageInfo[pageId].title;
+                pageDescription.textContent = pageInfo[pageId].description;
             }
-            
-            .upgrade-card p {
-                color: rgba(255,255,255,0.8);
-                font-size: 0.85rem;
-                margin-bottom: 1rem;
+
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            const activeNavLink = document.querySelector(`.nav-link[data-page="${pageId}"]`);
+            if (activeNavLink) {
+                activeNavLink.classList.add('active');
             }
-            
-            .upgrade-btn {
-                background: rgba(255,255,255,0.2);
-                color: white;
-                border: none;
-                width: 100%;
-                font-size: 0.85rem;
-                padding: 0.5rem 1rem;
+
+            // Close sidebar on mobile
+            if (window.innerWidth <= 768) {
+                sidebar.classList.remove('active');
             }
-            
-            .sidebar-stats {
-                background: var(--bg);
-                padding: 1.5rem;
-                border-radius: var(--radius);
-                margin-top: auto;
-            }
-            
-            .stat-item {
-                display: flex;
-                justify-content: space-between;
-                margin-bottom: 0.75rem;
-            }
-            
-            .stat-item:last-child {
-                margin-bottom: 0;
-            }
-            
-            .page-header {
-                margin-bottom: 2rem;
-            }
-            
-            .page-header h1 {
-                color: var(--text);
-                margin-bottom: 0.5rem;
-                font-size: 2rem;
-            }
-            
-            .page-header p {
-                color: var(--text-muted);
-            }
-            
-            .click-icon { background: linear-gradient(135deg, var(--secondary), #22d3ee); }
-            .revenue-icon { background: linear-gradient(135deg, var(--success), #34d399); }
-            .conversion-icon { background: linear-gradient(135deg, var(--accent), #fbbf24); }
-            .campaign-icon { background: linear-gradient(135deg, var(--primary), var(--primary-light)); }
-            
-            .change-text {
-                font-size: 0.85rem;
-            }
-            
-            .quick-actions {
-                margin: 2rem 0;
-            }
-            
-            .quick-actions h2 {
-                color: var(--text);
-                margin-bottom: 1.5rem;
-                font-size: 1.5rem;
-            }
-            
-            .actions-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 1rem;
-            }
-            
-            .action-card {
-                background: var(--card);
-                padding: 1.5rem;
-                border-radius: var(--radius);
-                text-align: center;
-                cursor: pointer;
-                transition: var(--transition);
-                border: 1px solid var(--border);
-            }
-            
-            .action-card:hover {
-                transform: translateY(-3px);
-                border-color: var(--primary);
-            }
-            
-            .action-icon {
-                width: 50px;
-                height: 50px;
-                background: var(--primary);
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                margin: 0 auto 1rem;
-                color: white;
-                font-size: 1.2rem;
-            }
-            
-            .action-card h3 {
-                color: var(--text);
-                margin-bottom: 0.5rem;
-                font-size: 1.1rem;
-            }
-            
-            .action-card p {
-                color: var(--text-muted);
-                font-size: 0.9rem;
-            }
-            
-            .chart-container {
-                background: var(--card);
-                padding: 2rem;
-                border-radius: var(--radius-lg);
-                margin-top: 2rem;
-                border: 1px solid var(--border);
-            }
-            
-            .chart-placeholder {
-                height: 300px;
-                background: var(--bg-light);
-                border-radius: var(--radius);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .chart-message {
-                text-align: center;
-                color: var(--text-muted);
-            }
-            
-            .chart-message i {
-                font-size: 3rem;
-                margin-bottom: 1rem;
-                opacity: 0.5;
-            }
-            
-            .notification-badge {
-                position: absolute;
-                top: -5px;
-                right: -5px;
-                background: var(--error);
-                color: white;
-                border-radius: 50%;
-                width: 18px;
-                height: 18px;
-                font-size: 0.7rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .notification-panel {
-                position: fixed;
-                top: 0;
-                right: -400px;
-                width: 380px;
-                height: 100vh;
-                background: var(--card);
-                border-left: 1px solid var(--border);
-                z-index: 1000;
-                transition: var(--transition);
-                box-shadow: var(--shadow-xl);
-            }
-            
-            .notification-panel.active {
-                right: 0;
-            }
-            
-            .notification-header {
-                padding: 1.5rem;
-                border-bottom: 1px solid var(--border);
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-            }
-            
-            .notification-header h3 {
-                color: var(--text);
-            }
-            
-            .notification-close {
-                background: none;
-                border: none;
-                color: var(--text-muted);
-                cursor: pointer;
-                padding: 0.5rem;
-            }
-            
-            .notification-list {
-                padding: 1rem;
-            }
-            
-            .notification-item {
-                display: flex;
-                gap: 1rem;
-                padding: 1rem;
-                border-radius: var(--radius);
-                margin-bottom: 0.5rem;
-                background: var(--bg-light);
-            }
-            
-            .notification-icon {
-                width: 40px;
-                height: 40px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                flex-shrink: 0;
-            }
-            
-            .notification-icon.success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
-            .notification-icon.warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
-            .notification-icon.info { background: rgba(99, 102, 241, 0.1); color: var(--primary); }
-            
-            .notification-content p {
-                color: var(--text);
-                margin-bottom: 0.25rem;
-            }
-            
-            .notification-content small {
-                color: var(--text-muted);
-                font-size: 0.8rem;
-            }
-            
-            .loading-state {
-                text-align: center;
-                padding: 3rem !important;
-            }
-            
-            @media (max-width: 768px) {
-                .sidebar {
-                    transform: translateX(-100%);
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Mobile menu toggle
+            menuToggle.addEventListener('click', function () {
+                sidebar.classList.toggle('active');
+            });
+
+            // Create link modal - multiple triggers
+            [createLinkBtn, createLinkSidebar, createLinkPageBtn].forEach(btn => {
+                if (btn) {
+                    btn.addEventListener('click', function () {
+                        createLinkModal.classList.add('active');
+                    });
                 }
-                
-                .sidebar.active {
-                    transform: translateX(0);
+            });
+
+            // Close modal events
+            closeModal.addEventListener('click', closeCreateModal);
+            cancelCreate.addEventListener('click', closeCreateModal);
+
+            // Close modal when clicking outside
+            createLinkModal.addEventListener('click', function (e) {
+                if (e.target === createLinkModal) {
+                    closeCreateModal();
                 }
-                
-                .main {
-                    margin-left: 0;
+            });
+
+            // Create link form submission
+            createLinkForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const title = document.getElementById('linkTitle').value;
+                const url = document.getElementById('destinationUrl').value;
+
+                if (title && url) {
+                    // In a real app, this would send data to your API
+                    showNotification(`Link "${title}" created successfully!`);
+                    closeCreateModal();
+                    createLinkForm.reset();
+
+                    // Add the new link to the table (in a real app, this would come from the API response)
+                    const newLink = {
+                        id: sampleLinks.length + 1,
+                        title: title,
+                        url: "linkflow.pro/s/" + title.toLowerCase().replace(/\s+/g, '-'),
+                        clicks: 0,
+                        conversions: 0,
+                        revenue: 0,
+                        status: "active"
+                    };
+
+                    sampleLinks.unshift(newLink);
+                    populateLinksTable();
                 }
-                
-                .mobile-menu-btn {
-                    display: block !important;
+            });
+
+            // User menu toggle
+            userMenu.addEventListener('click', function (e) {
+                e.stopPropagation();
+                userMenu.classList.toggle('active');
+            });
+
+            // Close user menu when clicking elsewhere
+            document.addEventListener('click', function () {
+                userMenu.classList.remove('active');
+            });
+
+            // Logout button
+            logoutBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+                showNotification('You have been logged out successfully.', 'success');
+                // In a real app, this would redirect to login page
+            });
+
+            // Refresh links button
+            refreshLinks.addEventListener('click', function () {
+                showNotification('Links refreshed successfully.', 'success');
+                // In a real app, this would fetch updated data from API
+            });
+
+            // Time range selector
+            timeRange.addEventListener('change', function () {
+                showNotification(`Time range updated to ${this.value}`, 'success');
+                // In a real app, this would update the charts with new data
+            });
+
+            // Navigation links
+            document.querySelectorAll('.nav-link[data-page]').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    navigateToPage(pageId);
+                });
+            });
+
+            // User dropdown links
+            document.querySelectorAll('.user-dropdown a[data-page]').forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const pageId = this.getAttribute('data-page');
+                    navigateToPage(pageId);
+                    userMenu.classList.remove('active');
+                });
+            });
+
+            // Link action buttons
+            document.addEventListener('click', function (e) {
+                // Edit link
+                if (e.target.closest('.edit-link')) {
+                    const linkId = e.target.closest('.edit-link').getAttribute('data-link-id');
+                    showNotification(`Editing link #${linkId}`, 'info');
                 }
-                
-                .notification-panel {
-                    width: 100%;
-                    right: -100%;
+
+                // Copy link
+                if (e.target.closest('.copy-link')) {
+                    const linkUrl = e.target.closest('.copy-link').getAttribute('data-link-url');
+                    navigator.clipboard.writeText(linkUrl)
+                        .then(() => {
+                            showNotification('Link copied to clipboard!', 'success');
+                        })
+                        .catch(err => {
+                            showNotification('Failed to copy link', 'error');
+                        });
                 }
-            }
-        `;
-        document.head.appendChild(dashboardStyles);
+
+                // View stats
+                if (e.target.closest('.view-stats')) {
+                    const linkId = e.target.closest('.view-stats').getAttribute('data-link-id');
+                    showNotification(`Viewing stats for link #${linkId}`, 'info');
+                }
+
+                // Toggle link status
+                if (e.target.closest('.status-badge')) {
+                    const badge = e.target.closest('.status-badge');
+                    const linkId = badge.getAttribute('data-link-id');
+                    const currentStatus = badge.textContent;
+                    const newStatus = currentStatus === 'active' ? 'paused' : 'active';
+
+                    // Update the badge
+                    badge.textContent = newStatus;
+                    badge.className = `status-badge ${newStatus}`;
+
+                    // Update the data
+                    const link = sampleLinks.find(l => l.id == linkId);
+                    if (link) {
+                        link.status = newStatus;
+                    }
+
+                    showNotification(`Link ${newStatus === 'active' ? 'activated' : 'paused'}`, 'success');
+                }
+            });
+        }
+
+        // Close create link modal
+        function closeCreateModal() {
+            createLinkModal.classList.remove('active');
+        }
     </script>
 </body>
 
