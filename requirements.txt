@@ -1,43 +1,39 @@
-# -----------------------------
-# Stage 1: Build environment
-# -----------------------------
-FROM python:3.11-slim AS build
+# FastAPI framework
+fastapi>=0.104.1
 
-WORKDIR /app
+# ASGI server
+uvicorn[standard]>=0.24.0
 
-# Copy requirements and install dependencies
-COPY requirements.txt .
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        gcc build-essential \
-    && pip install --no-cache-dir -r requirements.txt \
-    && apt-get remove -y gcc build-essential \
-    && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
+# Database ORM
+sqlalchemy>=2.0.23
+greenlet>=3.0.3
 
-# Copy project code
-COPY . .
+# Templating
+jinja2>=3.1.2
+markupsafe>=2.1.5
 
-# -----------------------------
-# Stage 2: Runtime environment
-# -----------------------------
-FROM python:3.11-slim
+# File uploads
+python-multipart>=0.0.6
+aiofiles>=23.2.1
 
-WORKDIR /app
+# Data validation
+pydantic>=2.5.0
+pydantic-core>=2.14.0
+typing-extensions>=4.8.0
 
-# Copy installed packages from build stage
-COPY --from=build /usr/local /usr/local
+# FastAPI dependencies
+anyio>=3.7.0
+sniffio>=1.3.0
 
-# Copy project files
-COPY . .
+# HTTP and networking
+httpx>=0.24.1
+h11>=0.14.0
 
-# Expose FastAPI port
-EXPOSE 8000
+# Command-line utilities
+click>=8.1.0
 
-# Environment variables
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
+# Starlette (FastAPI dependency)
+starlette>=0.27.0
 
-# Verify 'app/' folder exists
-RUN if [ ! -d "/app/app" ]; then echo "ERROR: 'app/' folder missing!"; exit 1; fi
-
-# Start FastAPI app with Render dynamic port
-CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Runtime environment variables
+python-dotenv>=1.0.0
