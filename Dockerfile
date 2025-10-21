@@ -6,17 +6,17 @@ FROM python:3.11-slim AS build
 # Set working directory
 WORKDIR /app
 
-# Copy dependency list
+# Copy requirements
 COPY requirements.txt .
 
-# Install system dependencies (for psycopg2, etc. if used later)
+# Install system dependencies for building packages, then Python packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential gcc \
+    gcc build-essential \
     && pip install --no-cache-dir -r requirements.txt \
-    && apt-get remove -y build-essential gcc \
+    && apt-get remove -y gcc build-essential \
     && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
 
-# Copy project files
+# Copy the entire project into the build image
 COPY . .
 
 # -----------------------------
@@ -26,10 +26,10 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Copy installed dependencies from build stage
+# Copy installed Python packages from build stage
 COPY --from=build /usr/local /usr/local
 
-# Copy only your project code
+# Copy project code
 COPY . .
 
 # Expose FastAPI port
@@ -39,5 +39,9 @@ EXPOSE 8000
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
-# Start FastAPI app (update `app.main:app` if needed)
+# Debug: confirm 'app/' folder exists
+RUN ls -l /app
+
+# Start FastAPI app
+# Make sure 'app.main:app' matches your project structure
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
