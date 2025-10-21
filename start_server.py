@@ -11,11 +11,14 @@ if os.path.exists(backend_dir):
 
 def main():
     print("🚀 Starting LinkFlow Pro Server...")
-    print("📊 API will be available at: http://localhost:8000")
-    print("📚 API Documentation: http://localhost:8000/api/docs")
-    print("🖥️  Frontend: http://localhost:8000")
-    print("📊 Dashboard: http://localhost:8000/dashboard")
-    print("❤️  Health Check: http://localhost:8000/health")
+
+    port = int(os.environ.get("PORT", 8000))
+
+    print(f"📊 API will be available at: http://localhost:{port}")
+    print(f"📚 API Documentation: http://localhost:{port}/api/docs")
+    print(f"🖥️  Frontend: http://localhost:{port}")
+    print(f"📊 Dashboard: http://localhost:{port}/dashboard")
+    print(f"❤️  Health Check: http://localhost:{port}/health")
     print("⏹️  Press Ctrl+C to stop the server")
     print("-" * 50)
 
@@ -24,13 +27,11 @@ def main():
 
     try:
         uvicorn.run(
-            "app.main:app",  # Updated import path
+            "app.main:app",  # Make sure this path exists inside backend/
             host="0.0.0.0",
-            port=8000,
-            reload=True,
+            port=port,
             log_level="info",
-            access_log=True,
-            reload_dirs=["backend"] if os.path.exists("backend") else ["."]
+            access_log=True
         )
     except KeyboardInterrupt:
         print("\n👋 Server stopped by user")
