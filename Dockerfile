@@ -9,14 +9,14 @@ WORKDIR /app
 # Copy requirements
 COPY requirements.txt .
 
-# Install system dependencies for building packages, then Python packages
+# Install system dependencies and Python packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc build-essential \
     && pip install --no-cache-dir -r requirements.txt \
     && apt-get remove -y gcc build-essential \
     && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
 
-# Copy the entire project into the build image
+# Copy entire project
 COPY . .
 
 # -----------------------------
@@ -39,9 +39,8 @@ EXPOSE 8000
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
-# Debug: confirm 'app/' folder exists
-RUN ls -l /app
+# Ensure 'app/' folder exists
+RUN if [ ! -d "/app/app" ]; then echo "ERROR: 'app/' folder missing!"; exit 1; fi
 
-# Start FastAPI app
-# Make sure 'app.main:app' matches your project structure
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Start FastAPI app using Render port
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
