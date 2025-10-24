@@ -1,26 +1,43 @@
-# Use Python slim base
+# -----------------------------
+# STAGE 1: Base Image
+# -----------------------------
 FROM python:3.11-slim
 
+# -----------------------------
+# STAGE 2: Working Directory
+# -----------------------------
 WORKDIR /app
 
-# Copy requirements first
+# -----------------------------
+# STAGE 3: System Dependencies & Requirements
+# -----------------------------
 COPY requirements.txt .
+
+# Install dependencies safely
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc build-essential \
     && pip install --no-cache-dir -r requirements.txt \
-    && apt-get remove -y gcc build-essential \
-    && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
+    && apt-get purge -y --auto-remove gcc build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy project files
+# -----------------------------
+# STAGE 4: Copy Application
+# -----------------------------
 COPY . .
 
-# Expose FastAPI port
+# -----------------------------
+# STAGE 5: Environment Setup
+# -----------------------------
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PORT=8000
+
+# -----------------------------
+# STAGE 6: Expose Port
+# -----------------------------
 EXPOSE 8000
 
-# Environment variables
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
-
-# Start server using start_server.py
+# -----------------------------
+# STAGE 7: Run the Server
+# -----------------------------
 CMD ["python", "start_server.py"]
-# Use Python slim base
