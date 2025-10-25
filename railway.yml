@@ -1,0 +1,12 @@
+project:
+  name: protective-surprise
+  environment: production
+  workspace: "Rizwan Ali's Projects"
+
+services:
+  - name: postgres
+    type: postgresql
+    variables:
+      SECRET_KEY: "+55SfwGYc6+flyaKM4oEjqZBvNDGbLZsJ1erJKkn/sg="
+      DATABASE_URL: "postgresql+psycopg2://user:password@containers-us-west-1.railway.app:5432/railway"
+      DEBUG: "True"
