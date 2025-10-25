@@ -3,6 +3,19 @@ import uvicorn
 import time
 import sys
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env in the project root
+dotenv_path = os.path.join(os.path.dirname(__file__), '.env')
+if os.path.exists(dotenv_path):
+    load_dotenv(dotenv_path)
+else:
+    print("⚠️  Warning: .env file not found at project root")
+
+# Access environment variables
+SECRET_KEY = os.getenv("SECRET_KEY", "default_secret_key")
+DATABASE_URL = os.getenv("DATABASE_URL", "affiliate.db")
+DEBUG = os.getenv("DEBUG", "True").lower() in ["true", "1", "yes"]
 
 # Add the backend directory to Python path
 backend_dir = os.path.join(os.path.dirname(__file__), 'backend')
@@ -19,6 +32,8 @@ def main():
     print(f"🖥️  Frontend: http://localhost:{port}")
     print(f"📊 Dashboard: http://localhost:{port}/dashboard")
     print(f"❤️  Health Check: http://localhost:{port}/health")
+    print(f"🔑 Secret Key: {SECRET_KEY[:5]}... (hidden)")
+    print(f"🗄️  Database URL: {DATABASE_URL}")
     print("⏹️  Press Ctrl+C to stop the server")
     print("-" * 50)
 
