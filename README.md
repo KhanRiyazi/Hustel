@@ -1,7 +1,23 @@
 # -----------------------------
-# List of important links
+# List of important links to redeploy
 # -----------------------------
-# 1 
+
+npm install -g @railway/cli
+
+railway up
+
+# 1️⃣ Build and push Docker image
+docker build -t linkflowpro .
+docker run -p 8000:8000 linkflowpro
+
+# 2️⃣ Then deploy through Railway
+railway up
+
+docker build -t linkflowpro . && railway up
+
+
+
+
 
 
 
