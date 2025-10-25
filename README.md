@@ -76,6 +76,8 @@ railway variables
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 
+# to add on railway
+railway add --database postgres
 
 
 
