@@ -110,3 +110,20 @@ railway add --database postgres
 # -----------------------------
 # To emove running container : docker rm 749a10c9c6ef
 # -----------------------------
+
+# to check railway connection
+
+$ ping hopper.proxy.rlwy.net
+
+# to check .env 
+python -c "import os; from dotenv import load_dotenv; load_dotenv(); print(os.getenv('DATABASE_URL'), os.getenv('SECRET_KEY'))"
+
+# to connect railway project to local 
+
+railway link
+
+# Switch context if needed
+
+# If you want to use the Linux backend (WSL2):
+
+docker context use desktop-linux

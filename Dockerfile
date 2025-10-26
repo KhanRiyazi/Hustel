@@ -1,6 +1,7 @@
 # -----------------------------
 # STAGE 1: Base Image
 # -----------------------------
+# Use lightweight Python 3.11 image
 FROM python:3.11-slim
 
 # -----------------------------
@@ -36,20 +37,23 @@ COPY . .
 # -----------------------------
 # STAGE 6: Environment Setup
 # -----------------------------
+# Unbuffered output and no bytecode writing for Docker logs
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1
 
-# Railway injects $PORT automatically, fallback to 8000 if missing
-ENV PORT=${PORT:-8000}
+# Railway automatically sets PORT at runtime; provide a build-time default
+ARG PORT=8000
+ENV PORT=${PORT}
 
 # -----------------------------
 # STAGE 7: Expose Port
 # -----------------------------
-EXPOSE $PORT
+# Docker EXPOSE must be integer; fixed default 8000 works
+EXPOSE 8000
 
 # -----------------------------
 # STAGE 8: Start the Server
 # -----------------------------
-# Use exec form for proper signal handling
-# Dynamically use $PORT from Railway
-CMD ["sh", "-c", "python start_server.py --port $PORT"]
+# Use exec form (JSON array) for proper signal forwarding
+# Pass PORT dynamically as an environment variable to start_server.py
+CMD ["sh", "-c", "python start_server.py"]
