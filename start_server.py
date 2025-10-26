@@ -7,7 +7,7 @@ Handles:
  - Environment variable loading
  - Database connection test
  - Dynamic port assignment (Railway/Local)
- - Developer-friendly startup logs
+ - Developer-friendly startup logs and error debugging
 """
 
 import uvicorn
@@ -16,6 +16,7 @@ import sys
 import os
 import psycopg2
 from dotenv import load_dotenv
+import traceback
 
 # --------------------------------------------------------
 # 1️⃣ Load environment variables from the .env file
@@ -65,9 +66,8 @@ def test_database_connection(url, retries=5, delay=3):
 def main():
     print("🚀 Starting LinkFlow Pro Server...\n")
 
-    # Railway sets PORT dynamically
+    # Railway sets PORT dynamically or fallback to 3000
     port = int(os.environ.get("PORT", 3000))
-
 
     print(f"📊 API will be available at: http://localhost:{port}")
     print(f"📚 API Documentation: http://localhost:{port}/api/docs")
@@ -108,6 +108,7 @@ def main():
         print("   Files here:", os.listdir('.'))
     except Exception as e:
         print(f"❌ Error starting server: {e}")
+        print(traceback.format_exc())
         sys.exit(1)
 
 # --------------------------------------------------------
