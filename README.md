@@ -127,3 +127,6 @@ railway link
 # If you want to use the Linux backend (WSL2):
 
 docker context use desktop-linux
+
+# Nomination of Docker image
+docker run -d -p 8000:8000 --name linkflowpro affiliate_saas:tag

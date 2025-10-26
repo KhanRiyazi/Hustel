@@ -66,7 +66,8 @@ def main():
     print("🚀 Starting LinkFlow Pro Server...\n")
 
     # Railway sets PORT dynamically
-    port = int(os.environ.get("PORT", 8000))
+    port = int(os.environ.get("PORT", 3000))
+
 
     print(f"📊 API will be available at: http://localhost:{port}")
     print(f"📚 API Documentation: http://localhost:{port}/api/docs")
